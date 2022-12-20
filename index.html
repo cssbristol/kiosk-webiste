@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+    <head>
+        <title>CSS Kiosk</title>
+        <link rel="stylesheet" href="index.css">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Display:wght@900&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js" integrity="sha512-CSBhVREyzHAjAFfBlIBakjoRUKp5h7VSweP0InR/pAJyptH7peuhCsqAI/snV+TwZmXZqoUklpXp6R6wMnYf5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="background-check.min.js"></script>
+        <script src="qrcode.min.js"></script>
+        <script src="front-matter.js"></script>
+        <script src="index.js"></script>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+    </head>
+    <body class="background">
+        <div class="main-container">
+            <div>
+                <div id="sponsors"></div>
+                <h1 id="event-title" class="bg-check-target">Random Event Title</h1>
+                <p id="starting-in" style="display: none;">Starting in 10 minutes</p>
+                <p class="date-time-location">
+                    <span id="single-day" style="display: none;">
+                        <span id="date" class="bg-check-target">20/12/2022</span>
+                        <span class="bg-check-target"> | </span>
+                        <span id="time" class="bg-check-target">6pm to 8pm</span>
+                    </span>
+                    <span id="multi-day" style="display: initial;">
+                        <span id="start-date" class="bg-check-target">20/12/2022 5am</span>
+                        <span class="bg-check-target"> to </span>
+                        <span id="end-date" class="bg-check-target">21/12/2022 8:30pm</span>
+                    </span>
+                    <span class="bg-check-target"> | </span>
+                    <span id="location" class="bg-check-target">MVB 1.11/1.12</span>
+                </p>
+                <p id="description" class="bg-check-target">Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores totam nostrum vero omnis numquam sit ipsam repellendus possimus aliquam, quaerat at ex accusamus esse eum iure dignissimos laborum quia quis.</p>
+            </div>
+
+            <div id="qr-code"></div>
+        </div>
+    </body>
+</html>
