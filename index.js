@@ -1,5 +1,6 @@
 let events = [];
 let eventsToDisplay = [];
+let companies = [];
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -15,10 +16,12 @@ window.addEventListener("load", () => {
 async function main() {
     events = await loadEvents();
     eventsToDisplay = await loadEventsToDisplay();
+    companies = await loadCompanies();
 
     setInterval(async () => {
         events = await loadEvents();
         eventsToDisplay = await loadEventsToDisplay();
+        companies = await loadCompanies();
     }, 5 * 60 * 1000);
 
     while (true) {
@@ -27,6 +30,37 @@ async function main() {
         else
             await delay(1000);
     }
+}
+
+async function loadCompanies() {
+    let r = await fetch("https://api.github.com/repos/cssbristol/cssbristol.github.io/contents/_companies");
+    let companies = await r.json();
+    let promises = [];
+    for (let company of companies) {
+        let promise = fetch(company.download_url)
+        .then(r => r.text())
+        .then(text => {
+            let data = extractor(text);
+            company.attributes = data.attributes;
+        });
+        promises.push(promise);
+    }
+    await Promise.all(promises);
+    return companies;
+}
+
+function findCompany(companyName) {
+    for (let company of companies)
+        if (company.attributes.name === companyName)
+            return company;
+    
+    return {
+        attributes: {
+            name: "",
+            logo: "",
+            link: ""
+        }
+    };
 }
 
 async function loadEvents() {
@@ -67,13 +101,16 @@ async function displayEvents() {
     while (yetToDisplay.length > 0) {
         let event = yetToDisplay.pop();
         displayEvent(event);
-        await delay(15 * 1000);
+        await delay(1000);
+        BackgroundCheck.refresh();
+        await delay(14 * 1000);
     }
 }
 
 function displayEvent(event) {
     const now = new Date();
     let body = document.body;
+    let sponsorsContainer = document.getElementById("sponsors");
     let QRCodeElement = document.getElementById("qr-code");
     let eventTitleElement = document.getElementById("event-title");
     let descriptionElement = document.getElementById("description");
@@ -96,21 +133,34 @@ function displayEvent(event) {
     let kioskOptions = {...event.attributes.kiosk, ...kioskDefault};
 
     body.style.backgroundImage = `url(${kioskOptions.background}), url(default_background.png)`;
+
+    sponsorsContainer.innerHTML = "";
+    if (kioskOptions.show_sponsors) {
+        for (let cohost of event.attributes.cohost) {
+            let company = findCompany(cohost.company);
+            let logoURL = "https://cssbristol.co.uk/assets/images/contrib/companies/" + company.attributes.logo;
+
+            let sponsorElement = document.createElement("img");
+            sponsorElement.src = logoURL;
+
+            sponsorsContainer.appendChild(sponsorElement);
+        }
+    }
    
     eventTitleElement.innerText = kioskOptions.kiosk_title;
 
-    let timeToStart = Math.abs(event.attributes.date - now);
+    let timeToStart = event.attributes.date - now;
     if (timeToStart < 0) {
         startingInElement.style.display = "";
         startingInElement.innerText = "In progress";
     } else if (timeToStart < 60 * 60 * 1000) {
         startingInElement.style.display = "";
-        let minutes = Math.abs(timeToStart / 60 / 1000);
-        startingInElement.innerText = `Starting in ${minutes} minute` + (minutes ? "s" : "");
+        let minutes = Math.floor(timeToStart / 60 / 1000);
+        startingInElement.innerText = `Starting in ${minutes} minute` + (minutes === 1 ? "" : "s");
     } else if (timeToStart < 24 * 60 * 60 * 1000) {
         startingInElement.style.display = "";
-        let hours = Math.abs(timeToStart / 60 / 60 / 1000);
-        startingInElement.innerText = `Starting in ${hours} hours` + (hours ? "s" : "");
+        let hours = Math.floor(timeToStart / 60 / 60 / 1000);
+        startingInElement.innerText = `Starting in ${hours} hour` + (hours === 1 ?  "" : "s");
     } else {
         startingInElement.style.display = "none";
     }
@@ -119,7 +169,10 @@ function displayEvent(event) {
     let endDate = event.attributes.date_end.toLocaleDateString("en-GB");
     let startTime = event.attributes.date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }).replace(" ", "").toLowerCase();
     let endTime = event.attributes.date_end.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }).replace(" ", "").toLowerCase();
-    if (startDate === endDate) {
+    if (kioskOptions.show_date === false) {
+        singleDayContainer.style.display = "none";
+        multiDayContainer.style.display = "none";
+    } else if (startDate === endDate) {
         singleDayContainer.style.display = "";
         multiDayContainer.style.display = "none";
         dateElement.innerText = startDate;
@@ -127,8 +180,8 @@ function displayEvent(event) {
     } else {
         singleDayContainer.style.display = "none";
         multiDayContainer.style.display = "";
-        startElement = `${startDate} ${startTime}`;
-        endElement = `${endDate} ${endTime}`;
+        startElement.innerText = `${startDate} ${startTime}`;
+        endElement.innerText = `${endDate} ${endTime}`;
     }
 
     locationElement.innerText = event.attributes.location;

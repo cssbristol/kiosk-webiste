@@ -39,6 +39,15 @@ h1 {
     height: fit-content;
 }
 
+#sponsors {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+#sponsors > * {
+    max-height: 40px;
+}
+
 #starting-in {
     background-color: red;
     width: fit-content;
