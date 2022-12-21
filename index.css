@@ -21,6 +21,19 @@ body {
     justify-content: flex-end;
 }
 
+#video-background {
+    position: relative;
+    object-fit: cover;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
 h1 {
     font-family: 'Noto Sans Display', sans-serif;
     font-size: 50px;

@@ -105,6 +105,7 @@ async function displayEvents() {
 function displayEvent(event) {
     const now = new Date();
     let body = document.body;
+    let videoContainer = document.getElementById("video-background");
     let sponsorsContainer = document.getElementById("sponsors");
     let QRCodeElement = document.getElementById("qr-code");
     let eventTitleElement = document.getElementById("event-title");
@@ -133,7 +134,16 @@ function displayEvent(event) {
         kioskOptions.background = "https://cssbristol.co.uk/assets/images/contrib/events/" + kioskOptions.background;
     }
 
-    body.style.backgroundImage = `url(${kioskOptions.background}), url(default_background.png)`;
+    if (kioskOptions.background.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        videoContainer.style.display = "none";
+        body.style.backgroundImage = `url(${kioskOptions.background}), url(default_background.png)`;
+    } else {
+        videoContainer.style.display = "";
+        videoContainer.innerHTML = "";
+        let source = document.createElement("source");
+        source.src = kioskOptions.background;
+        videoContainer.appendChild(source);
+    }
 
     sponsorsContainer.innerHTML = "";
     if (kioskOptions.show_sponsors) {
