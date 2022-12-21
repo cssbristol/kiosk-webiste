@@ -51,7 +51,7 @@ async function loadCompanies() {
 
 function findCompany(companyName) {
     for (let company of companies)
-        if (company.attributes.name === companyName)
+        if (company.attributes.name.toLowerCase() === companyName.toLowerCase())
             return company;
     
     return {
@@ -124,7 +124,7 @@ function displayEvent(event) {
     let locationElement = document.getElementById("location");
 
     const kioskDefault = {
-        background: "https://cssbristol.co.uk/assets/images/contrib/events/" + event.attributes.banner || "assets/default_background.png",
+        background: event.attributes.banner ? "https://cssbristol.co.uk/assets/images/contrib/events/" + event.attributes.banner : "default_background.png",
         short_description: event.body.substring(0, 150) + "..." || "",
         kiosk_title: event.attributes.title || "",
         show_sponsors: true,
@@ -141,6 +141,7 @@ function displayEvent(event) {
             let logoURL = "https://cssbristol.co.uk/assets/images/contrib/companies/" + company.attributes.logo;
 
             let sponsorElement = document.createElement("img");
+            sponsorElement.classList.add("bg-check-target");
             sponsorElement.src = logoURL;
 
             sponsorsContainer.appendChild(sponsorElement);
