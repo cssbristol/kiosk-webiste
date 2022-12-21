@@ -124,13 +124,19 @@ function displayEvent(event) {
     let locationElement = document.getElementById("location");
 
     const kioskDefault = {
-        background: event.attributes.banner ? "https://cssbristol.co.uk/assets/images/contrib/events/" + event.attributes.banner : "default_background.png",
-        short_description: event.body.substring(0, 150) + "..." || "",
-        kiosk_title: event.attributes.title || "",
+        title: event.attributes.title || "",
+        background: event.attributes.banner ? "https://cssbristol.co.uk/assets/images/contrib/events/" + event.attributes.banner : undefined,
+        description: event.body.substring(0, 150) + "..." || "",
         show_sponsors: true,
         show_date: true
     }
     let kioskOptions = {...event.attributes.kiosk, ...kioskDefault};
+
+    if (kioskOptions.background === undefined) {
+        kioskOptions.background = "default_background.png";
+    } else if (!kioskOptions.background.startsWith("http")) {
+        kioskOptions.background = "https://cssbristol.co.uk/assets/images/contrib/events/" + kioskOptions.background;
+    }
 
     body.style.backgroundImage = `url(${kioskOptions.background}), url(default_background.png)`;
 
@@ -148,7 +154,7 @@ function displayEvent(event) {
         }
     }
    
-    eventTitleElement.innerText = kioskOptions.kiosk_title;
+    eventTitleElement.innerText = kioskOptions.title;
 
     let timeToStart = event.attributes.date - now;
     if (timeToStart < 0) {
@@ -187,7 +193,7 @@ function displayEvent(event) {
 
     locationElement.innerText = event.attributes.location;
 
-    descriptionElement.innerText = kioskOptions.short_description;
+    descriptionElement.innerText = kioskOptions.description;
 
     let url = "https://cssbristol.co.uk/events/" + event.name.replace(".md", "");
     QRCodeElement.innerHTML = "";
