@@ -1,15 +1,12 @@
 let events = [];
 let eventsToDisplay = [];
 let companies = [];
+let bgCheck = null;
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 window.addEventListener("load", () => {
-    BackgroundCheck.init({
-        targets: ".bg-check-target",
-        images: ".background"
-    });
-
+    // bgCheck = new BackgroundCheck("bg-check-target", "background");
     main()
 });
 
@@ -101,9 +98,7 @@ async function displayEvents() {
     while (yetToDisplay.length > 0) {
         let event = yetToDisplay.pop();
         displayEvent(event);
-        await delay(1000);
-        BackgroundCheck.refresh();
-        await delay(14 * 1000);
+        await delay(15 * 1000);
     }
 }
 
@@ -130,7 +125,7 @@ function displayEvent(event) {
         show_sponsors: true,
         show_date: true
     }
-    let kioskOptions = {...event.attributes.kiosk, ...kioskDefault};
+    let kioskOptions = {...kioskDefault, ...event.attributes.kiosk};
 
     if (kioskOptions.background === undefined) {
         kioskOptions.background = "default_background.png";
@@ -203,10 +198,10 @@ function displayEvent(event) {
 	    height: 220,
     });
 
-    let img = new Image();
-    img.src = kioskOptions.background;
-    img.onload = () => {
-        BackgroundCheck.refresh();
-    }
-    if (img.complete) img.onload();
+    // let img = new Image();
+    // img.src = kioskOptions.background;
+    // img.onload = () => {
+    //     bgCheck.check();
+    // }
+    // if (img.complete) img.onload();
 }
