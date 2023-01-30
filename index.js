@@ -71,8 +71,8 @@ async function loadEvents() {
             event.text = text;
             let data = extractor(event.text);
             event.attributes = data.attributes;
-            event.attributes.date = new Date(event.attributes.date);
-            event.attributes.date_end = new Date(event.attributes.date_end);
+            event.attributes.date = new Date(event.attributes.date.replace(" ", "T").replace(" ", ""));
+            event.attributes.date_end = new Date(event.attributes.date_end.replace(" ", "T").replace(" ", ""));
             event.body = data.body;
         });
         promises.push(promise);
