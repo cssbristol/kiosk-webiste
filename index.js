@@ -147,7 +147,7 @@ function displayEvent(event) {
 
     sponsorsContainer.innerHTML = "";
     if (kioskOptions.show_sponsors) {
-        for (let cohost of event.attributes.cohost) {
+        for (let cohost of event.attributes.cohost || []) {
             let company = findCompany(cohost.company);
             let logoURL = "https://cssbristol.co.uk/assets/images/contrib/companies/" + company.attributes.logo;
 
